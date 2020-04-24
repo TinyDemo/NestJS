@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post, Res } from '@nestjs/common';
 import { RegisterWithEmailDto } from './dto/register-with-email.dto';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
@@ -31,8 +31,21 @@ export class AuthController {
     });
     return;
   }
+
+  /**
+   * 邮箱登录
+   * @param loginWithEmailDto
+   */
   @Post('login/email')
+  @HttpCode(200)
   async loginWithEmail(@Body() loginWithEmailDto: LoginWithEmailDto) {
-    await this.authService.loginWithEmail(loginWithEmailDto);
+    const token = await this.authService.loginWithEmail(loginWithEmailDto);
+    return {
+      code: 100000,
+      message: 'OK',
+      data: {
+        token: token.token,
+      },
+    };
   }
 }
