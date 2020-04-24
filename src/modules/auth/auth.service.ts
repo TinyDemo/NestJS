@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, Req, UseFilters } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, UseFilters } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';

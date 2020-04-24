@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Res } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
 import { RegisterWithEmailDto } from './dto/register-with-email.dto';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
