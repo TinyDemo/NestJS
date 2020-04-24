@@ -1,7 +1,8 @@
-import { Body, Controller, HttpException, Post, Res } from '@nestjs/common';
-import { RegisterWithEmailDto } from './registerWithEmail.dto';
+import { Body, Controller, Post, Res } from '@nestjs/common';
+import { RegisterWithEmailDto } from './dto/register-with-email.dto';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
+import { LoginWithEmailDto } from './dto/login-with-email.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -31,5 +32,7 @@ export class AuthController {
     return;
   }
   @Post('login/email')
-  loginWithEmail() {}
+  async loginWithEmail(@Body() loginWithEmailDto: LoginWithEmailDto) {
+    await this.authService.loginWithEmail(loginWithEmailDto);
+  }
 }
