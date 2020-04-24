@@ -5,7 +5,7 @@ import { User } from '../user/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoginWithEmailDto } from './dto/login-with-email.dto';
 import { EntityNotFoundError } from 'typeorm/error/EntityNotFoundError';
-import { BadRequestExceptionFilter } from '../filter/bad-request-exception.filter';
+import { BadRequestExceptionFilter } from '../../filter/bad-request-exception.filter';
 
 @Injectable()
 export class AuthService {
