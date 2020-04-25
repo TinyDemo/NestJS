@@ -5,9 +5,9 @@ import { Repository } from 'typeorm';
 import { Token } from '../../entities/token.entity';
 import { User } from '../../entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoginWithEmailDto } from './dto/login-with-email.dto';
 import { BadRequestExceptionFilter } from '../../filter/bad-request-exception.filter';
 import { Request } from 'express';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +18,7 @@ export class AuthService {
     private readonly tokenRepository: Repository<Token>,
     @Inject(REQUEST)
     private readonly req: Request,
+    private readonly userService: UserService,
   ) {}
 
   /**
@@ -47,25 +48,22 @@ export class AuthService {
     return this.userRepository.save(user);
   }
   @UseFilters(BadRequestExceptionFilter)
-  async loginWithEmail(loginWithEmailDto: LoginWithEmailDto): Promise<Token> {
-    let user: User;
-    try {
-      user = await this.userRepository.findOneOrFail({ email: loginWithEmailDto.email });
-    } catch (e) {
+  async loginWithEmail(email: string, password: string): Promise<User> {
+    const user = await this.userService.findUserByEmail(email);
+    if (undefined === user) {
       throw new BadRequestException({
         code: 100001,
         message: '该用户不存在',
       });
     }
-
-    const passwordCheckResult = bcrypt.compareSync(loginWithEmailDto.password, user.password);
+    const passwordCheckResult = await bcrypt.compare(password, user.password);
     if (!passwordCheckResult) {
       throw new BadRequestException({
         code: 100002,
         message: '密码错误',
       });
     }
-    return this.login(user);
+    return user;
   }
   async login(user: User): Promise<Token> {
     const token: Token = new Token();

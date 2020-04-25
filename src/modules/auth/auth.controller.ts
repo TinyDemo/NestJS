@@ -1,8 +1,10 @@
-import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { User } from '../../entities/user.entity';
 import { RegisterWithEmailDto } from './dto/register-with-email.dto';
 import { AuthService } from './auth.service';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { LoginWithEmailDto } from './dto/login-with-email.dto';
+import { LocalAuthGuard } from './local-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -34,12 +36,15 @@ export class AuthController {
 
   /**
    * 邮箱登录
+   * @param req
    * @param loginWithEmailDto
    */
+  @UseGuards(LocalAuthGuard)
   @Post('login/email')
   @HttpCode(200)
-  async loginWithEmail(@Body() loginWithEmailDto: LoginWithEmailDto) {
-    const token = await this.authService.loginWithEmail(loginWithEmailDto);
+  async loginWithEmail(@Req() req: Request, @Body() loginWithEmailDto: LoginWithEmailDto) {
+    const token = await this.authService.login(<User>req.user);
+
     return {
       code: 100000,
       message: 'OK',
