@@ -1,10 +1,11 @@
-import { Body, Controller, HttpCode, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, HttpCode, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { User } from '../../entities/user.entity';
 import { RegisterWithEmailDto } from './dto/register-with-email.dto';
 import { AuthService } from './auth.service';
 import { Request, Response } from 'express';
 import { LoginWithEmailDto } from './dto/login-with-email.dto';
-import { LocalAuthGuard } from './local-auth.guard';
+import { BearerAuthGuard } from './guards/bearer-auth.guard';
+import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -44,7 +45,6 @@ export class AuthController {
   @HttpCode(200)
   async loginWithEmail(@Req() req: Request, @Body() loginWithEmailDto: LoginWithEmailDto) {
     const token = await this.authService.login(<User>req.user);
-
     return {
       code: 100000,
       message: 'OK',
@@ -52,5 +52,10 @@ export class AuthController {
         token: token.token,
       },
     };
+  }
+  @UseGuards(BearerAuthGuard)
+  @Delete('logout')
+  async logout() {
+    await this.authService.logout();
   }
 }

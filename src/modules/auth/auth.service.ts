@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, UseFilters } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, Scope, UseFilters } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
@@ -8,8 +8,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BadRequestExceptionFilter } from '../../filter/bad-request-exception.filter';
 import { Request } from 'express';
 import { UserService } from '../user/user.service';
+import { TokenService } from './token.service';
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class AuthService {
   constructor(
     @InjectRepository(User)
@@ -19,6 +20,7 @@ export class AuthService {
     @Inject(REQUEST)
     private readonly req: Request,
     private readonly userService: UserService,
+    private readonly tokenService: TokenService,
   ) {}
 
   /**
@@ -27,11 +29,8 @@ export class AuthService {
    * @return Promise 已注册：true
    */
   async emailIsExists(email: string): Promise<boolean> {
-    const count = await this.userRepository
-      .createQueryBuilder()
-      .where('email=:email', { email: email })
-      .getCount();
-    return count > 0;
+    const user = await this.userService.findUserByEmail(email);
+    return undefined !== user;
   }
 
   /**
@@ -72,5 +71,8 @@ export class AuthService {
     token.ip = this.req.ip;
     token.ua = this.req.get('User-Agent');
     return this.tokenRepository.save(token);
+  }
+  async logout() {
+    return await this.tokenService.destroyCurrentToken();
   }
 }
