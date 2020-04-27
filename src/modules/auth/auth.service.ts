@@ -55,7 +55,7 @@ export class AuthService {
         message: '该用户不存在',
       });
     }
-    const passwordCheckResult = await bcrypt.compare(password, user.password);
+    const passwordCheckResult = await this.checkUserPassword(user, password);
     if (!passwordCheckResult) {
       throw new BadRequestException({
         code: 100002,
@@ -74,5 +74,14 @@ export class AuthService {
   }
   async logout() {
     return await this.tokenService.destroyCurrentToken();
+  }
+
+  /**
+   * 校验密码是否正确
+   * @param user
+   * @param password
+   */
+  async checkUserPassword(user: User, password: string) {
+    return bcrypt.compare(password, user.password);
   }
 }

@@ -12,4 +12,5 @@ export class UserController {
     const user = <User>req.user;
     return { id: user.id };
   }
+
 }
