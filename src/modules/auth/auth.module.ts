@@ -1,5 +1,4 @@
-import { Module } from '@nestjs/common';
-import { PassportModule } from '@nestjs/passport';
+import { forwardRef, Module } from '@nestjs/common';
 import { Passport } from '../../entities/passport.entity';
 import { Token } from '../../entities/token.entity';
 import { AuthController } from './auth.controller';
@@ -14,8 +13,9 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { TokenService } from './token.service';
 
 @Module({
-  imports: [UserModule, TypeOrmModule.forFeature([User, Token, Passport]), PassportModule],
+  imports: [ TypeOrmModule.forFeature([User, Token, Passport]), forwardRef(() => UserModule)],
   controllers: [AuthController, PassportController],
   providers: [AuthService, TokenService, PassportService, LocalStrategy, BearerStrategy],
+  exports: [TokenService, PassportService],
 })
 export class AuthModule {}

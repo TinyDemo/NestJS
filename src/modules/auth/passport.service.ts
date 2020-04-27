@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { Passport } from '../../entities/passport.entity';
 import { User } from '../../entities/user.entity';
 import { AuthService } from './auth.service';
@@ -9,15 +10,37 @@ import * as bcrpyt from 'bcrypt';
 @Injectable()
 export class PassportService {
   constructor(
-    private readonly authService: AuthService,
+    private moduleRef: ModuleRef,
     @InjectRepository(Passport)
     private readonly passportRepository: Repository<Passport>,
+    private readonly authService: AuthService,
   ) {}
-  async byPassword(user: User, password: string) {
+
+  async generatePassportByPassword(user: User, password: string) {
     if (!(await this.authService.checkUserPassword(user, password))) {
       throw new BadRequestException(['密码错误']);
     }
     return this.generatePassport(user);
+  }
+  async checkPassport(user: User, credentials: string) {
+    const passport = await this.passportRepository.findOne({ userId: user.id, credentials: credentials });
+    if (undefined === passport) {
+      return false;
+    }
+    await this.passportRepository.remove(passport);
+    return true;
+  }
+
+  /**
+   * 删除指定用户的所有凭证
+   * @param user
+   */
+  async deleteAllPassport(user: User): Promise<DeleteResult> {
+    return this.passportRepository
+      .createQueryBuilder()
+      .delete()
+      .where({ user_id: user.id })
+      .execute();
   }
   private async generatePassport(user: User) {
     const credentials = await bcrpyt.genSalt(10);

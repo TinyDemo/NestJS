@@ -1,12 +1,12 @@
-import { BadRequestException, Inject, Injectable, Scope, UseFilters } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, Scope, UseFilters } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
+import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
+import { Request } from 'express';
 import { Repository } from 'typeorm';
 import { Token } from '../../entities/token.entity';
 import { User } from '../../entities/user.entity';
-import { InjectRepository } from '@nestjs/typeorm';
 import { BadRequestExceptionFilter } from '../../filter/bad-request-exception.filter';
-import { Request } from 'express';
 import { UserService } from '../user/user.service';
 import { TokenService } from './token.service';
 
@@ -19,6 +19,7 @@ export class AuthService {
     private readonly tokenRepository: Repository<Token>,
     @Inject(REQUEST)
     private readonly req: Request,
+    @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
     private readonly tokenService: TokenService,
   ) {}

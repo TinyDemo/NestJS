@@ -1,24 +1,28 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { ContextIdFactory, ModuleRef } from '@nestjs/core';
 import { PassportStrategy } from '@nestjs/passport';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Strategy } from 'passport-http-bearer';
-import { Request } from 'express';
-import { UserService } from '../../user/user.service';
-import { TokenService } from '../token.service';
+import { Repository } from 'typeorm';
+import { Token } from '../../../entities/token.entity';
+import { User } from '../../../entities/user.entity';
+
 @Injectable()
 export class BearerStrategy extends PassportStrategy(Strategy) {
-  constructor(private moduleRef: ModuleRef, private readonly userService: UserService) {
-    super({ passReqToCallback: true });
+  constructor(
+    @InjectRepository(Token)
+    private readonly tokenRepository: Repository<Token>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {
+    super();
   }
-  async validate(request: Request, tokenStr: string) {
-    const contextId = ContextIdFactory.getByRequest(request);
-    const tokenService = await this.moduleRef.resolve(TokenService, contextId);
 
-    const token = await tokenService.findTokenByTokenStr(tokenStr);
+  async validate(tokenStr: string) {
+    const token = await this.tokenRepository.findOne({ token: tokenStr });
     if (undefined === token) {
       throw new UnauthorizedException();
     }
-    const user = await this.userService.findUserById(token.userId);
+    const user = await this.userRepository.findOne({ id: token.userId });
     if (undefined === user) {
       throw new UnauthorizedException();
     }

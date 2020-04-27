@@ -11,7 +11,7 @@ export class PassportController {
   @UseGuards(BearerAuthGuard)
   @Post('by-passport')
   async byPassword(@Req() req: Request, @Body() passportByPasswordDto: PassportByPasswordDto) {
-    const passport = await this.passportService.byPassword(<User>req.user, passportByPasswordDto.password);
+    const passport = await this.passportService.generatePassportByPassword(<User>req.user, passportByPasswordDto.password);
     return {
       code: 100000,
       message: 'OK',

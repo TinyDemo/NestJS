@@ -2,8 +2,9 @@ import { Inject, Injectable, Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Request } from 'express';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { Token } from '../../entities/token.entity';
+import { User } from '../../entities/user.entity';
 
 @Injectable({ scope: Scope.REQUEST })
 export class TokenService {
@@ -48,5 +49,17 @@ export class TokenService {
   async destroyCurrentToken() {
     const token = await this.parseTokenFromRequest();
     return this.tokenRepository.softDelete(token.id);
+  }
+
+  /**
+   * 删除用户所有的 Token
+   * @param user
+   */
+  async deleteAllToken(user: User): Promise<DeleteResult> {
+    return this.tokenRepository
+      .createQueryBuilder()
+      .delete()
+      .where({ user_id: user.id })
+      .execute();
   }
 }
