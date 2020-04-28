@@ -13,8 +13,6 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -62,8 +60,7 @@
     "ts-loader": "^6.2.1",
     "ts-node": "^8.9.1",
     "tsconfig-paths": "^3.9.0",
-    "typescript": "^3.7.4",
-    "vuepress": "^1.4.1"
+    "typescript": "^3.7.4"
   },
   "jest": {
     "moduleFileExtensions": [
