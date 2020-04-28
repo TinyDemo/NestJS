@@ -1,8 +1,6 @@
 # TinyDemo/NestJS
 
-- [x] 注册
-- [x] 登录
-- [x] 退出
-- [ ] 删除账号
 
+## 说明
 
+[中文文档](https://www.yuque.com/where/fg10rn)
