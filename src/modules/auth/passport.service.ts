@@ -1,5 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
+import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { Passport } from '../../entities/passport.entity';
@@ -10,10 +9,10 @@ import * as bcrpyt from 'bcrypt';
 @Injectable()
 export class PassportService {
   constructor(
-    private moduleRef: ModuleRef,
     @InjectRepository(Passport)
     private readonly passportRepository: Repository<Passport>,
-    private readonly authService: AuthService,
+    @Inject(forwardRef(() => AuthService))
+    private authService: AuthService,
   ) {}
 
   async generatePassportByPassword(user: User, password: string) {

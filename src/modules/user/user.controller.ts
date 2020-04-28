@@ -1,3 +1,4 @@
+import { MailerService } from '@nestjs-modules/mailer';
 import { Controller, Delete, Get, HttpCode, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { User } from '../../entities/user.entity';
@@ -7,11 +8,25 @@ import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService, private readonly mailerService: MailerService) {}
   @UseGuards(BearerAuthGuard)
   @Get('profile')
   profile(@Req() req: Request) {
     const user = <User>req.user;
+    this.mailerService
+      .sendMail({
+        to: user.email, // list of receivers
+        from: 'noreply@nestjs.com', // sender address
+        subject: 'Testing Nest MailerModule ✔', // Subject line
+        text: 'welcome', // plaintext body
+        html: '<b>welcome</b>', // HTML body content
+      })
+      .then(() => {
+        console.log('OK');
+      })
+      .catch(() => {
+        console.log('Error');
+      });
     return {
       code: 100000,
       message: 'OK',
