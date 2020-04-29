@@ -16,6 +16,10 @@ export class User {
   phoneAreaCode: string;
   @Column({ nullable: true })
   phoneNumber: string;
+  @Column({ name: 'email_verified_at', type: 'datetime', nullable: true })
+  emailVerifiedAt: Date;
+  @Column({ name: 'phone_verified_at', type: 'datetime', nullable: true })
+  phoneVerifiedAt: Date;
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })

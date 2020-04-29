@@ -13,11 +13,11 @@ import mailConfiguration from '../../config/mail';
   imports: [
     PassportModule,
     TypeOrmModule.forRoot(),
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
     MailerModule.forRoot({
       transport: mailConfiguration(),
       template: {
-        dir: __dirname + '/../../templates',
+        dir: __dirname + '/../../templates/mail',
         adapter: new HandlebarsAdapter(),
         options: {
           strict: true,

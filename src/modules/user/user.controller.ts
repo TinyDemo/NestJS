@@ -18,8 +18,7 @@ export class UserController {
         to: user.email, // list of receivers
         from: 'noreply@nestjs.com', // sender address
         subject: 'Testing Nest MailerModule ✔', // Subject line
-        text: 'welcome', // plaintext body
-        html: '<b>welcome</b>', // HTML body content
+        template: 'welcome',
       })
       .then(() => {
         console.log('OK');
