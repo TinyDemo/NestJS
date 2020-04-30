@@ -1,8 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from '../../entities/user.entity';
-import { UserModule } from '../user/user.module';
 import { AppController } from './app.controller';
+import { AppModule } from './app.module';
 import { AppService } from './app.service';
 
 describe('AppController', () => {
@@ -10,12 +8,12 @@ describe('AppController', () => {
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
-      imports: [UserModule],
+      imports: [AppModule],
       controllers: [AppController],
       providers: [AppService],
     }).compile();
 
-    appController = app.get<AppController>(AppController);
+    appController = await app.resolve<AppController>(AppController);
   });
 
   describe('root', () => {
