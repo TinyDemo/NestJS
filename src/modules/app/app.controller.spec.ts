@@ -10,7 +10,7 @@ describe('AppController', () => {
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
-      imports: [TypeOrmModule.forRoot({ entities: [User] }), UserModule],
+      imports: [UserModule],
       controllers: [AppController],
       providers: [AppService],
     }).compile();
