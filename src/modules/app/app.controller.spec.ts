@@ -1,3 +1,4 @@
+import { exit } from '@nestjs/cli/actions';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppModule } from './app.module';
@@ -6,7 +7,7 @@ import { AppService } from './app.service';
 describe('AppController', () => {
   let appController: AppController;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const app: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
       controllers: [AppController],

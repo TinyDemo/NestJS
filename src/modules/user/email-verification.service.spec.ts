@@ -22,11 +22,10 @@ describe('EmailVerificationService', () => {
     emailVerificationService = await moduleRef.resolve<EmailVerificationService>(EmailVerificationService);
     userService = await moduleRef.resolve<UserService>(UserService);
   });
-  describe('root', () => {
-    it('should return "Hello World!"', async () => {
+  describe('EmailVerificationService', () => {
+    it('return one instance of EmailVerification"', async () => {
       const user = await userService.findUserByEmail('liuzhaowei55@sina.com');
-      const output = await emailVerificationService.generateEmailVerification(user);
-      console.log(output);
+      // expect(await emailVerificationService.generateEmailVerification(user)).toBeInstanceOf(EmailVerification);
     });
   });
 });
