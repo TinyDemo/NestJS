@@ -65,7 +65,7 @@ export class UserController {
       message: 'OK',
     };
   }
-  // TODO
+
   @UseGuards(BearerAuthGuard, PassportAuthGuard)
   @Post('verify-code-style-email-verification')
   async verifyCodeStyleEmailVerification(@Req() req: Request, @Body() body: VerifyCodeStyleEmailVerificationDto) {
