@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { User } from '../../entities/user.entity';
 import { PassportService } from '../auth/passport.service';
 import { TokenService } from '../auth/token.service';
+import { AllowUserUpdateProfileDto } from './dto/allow-user-update-profile.dto';
 @Injectable()
 export class UserService {
   constructor(
@@ -38,5 +39,11 @@ export class UserService {
 
   findAll(): Promise<User[]> {
     return this.userRepository.find();
+  }
+  updateProfile(user: User, data: AllowUserUpdateProfileDto): Promise<User> {
+    if (data.nickname) {
+      user.nickname = data.nickname;
+    }
+    return this.userRepository.save(user);
   }
 }

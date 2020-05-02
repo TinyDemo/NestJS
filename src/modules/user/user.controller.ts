@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, HttpCode, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { IsNotEmpty } from 'class-validator';
 import { Request } from 'express';
 import { User } from '../../entities/user.entity';
 import { BearerAuthGuard } from '../auth/guards/bearer-auth.guard';
 import { PassportAuthGuard } from '../auth/guards/passport-auth.guard';
+import { AllowUserUpdateProfileDto } from './dto/allow-user-update-profile.dto';
 import { VerifyCodeStyleEmailVerificationDto } from './dto/verify-code-style-email-verification.dto';
 import { EmailVerificationService } from './email-verification.service';
 import { UserService } from './user.service';
@@ -66,7 +67,7 @@ export class UserController {
     };
   }
 
-  @UseGuards(BearerAuthGuard, PassportAuthGuard)
+  @UseGuards(BearerAuthGuard)
   @Post('verify-code-style-email-verification')
   async verifyCodeStyleEmailVerification(@Req() req: Request, @Body() body: VerifyCodeStyleEmailVerificationDto) {
     const user = <User>req.user;
@@ -82,5 +83,14 @@ export class UserController {
         message: '校验失败',
       };
     }
+  }
+  @UseGuards(BearerAuthGuard)
+  @Patch('profile')
+  async updateProfile(@Req() req: Request, @Body() body: AllowUserUpdateProfileDto) {
+    await this.userService.updateProfile(<User>req.user, body);
+    return {
+      code: 100000,
+      message: 'OK',
+    };
   }
 }
