@@ -9,9 +9,12 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new BadRequestExceptionFilter());
-  app.useStaticAssets(path.join(__dirname, '..', 'public'), {
+  console.log(path.join(__dirname, '../..', 'public'))
+  app.useStaticAssets(path.join(__dirname, '../..', 'public'), {
     prefix: '/public/',
   });
   await app.listen(3000);
+  process.env.URL = await app.getUrl();
+  console.log(`${await app.getUrl()}`);
 }
 bootstrap();

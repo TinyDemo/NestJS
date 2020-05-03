@@ -1,4 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+  AfterLoad,
+} from 'typeorm';
 
 @Entity('user')
 export class User {
@@ -26,4 +34,11 @@ export class User {
   updatedAt: Date;
   @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
   deletedAt: Date;
+
+  @AfterLoad()
+  renderAvatarLink() {
+    if (typeof this.avatar === 'string') {
+      return (this.avatar = `${process.env.URL}/${this.avatar}`);
+    }
+  }
 }
