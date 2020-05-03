@@ -1,10 +1,13 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as fs from 'fs';
+import * as path from 'path';
 import { Repository } from 'typeorm';
 import { User } from '../../entities/user.entity';
 import { PassportService } from '../auth/passport.service';
 import { TokenService } from '../auth/token.service';
 import { AllowUserUpdateProfileDto } from './dto/allow-user-update-profile.dto';
+const crypto = require('crypto');
 @Injectable()
 export class UserService {
   constructor(
@@ -44,6 +47,39 @@ export class UserService {
     if (data.nickname) {
       user.nickname = data.nickname;
     }
+    return this.userRepository.save(user);
+  }
+
+  /**
+   * {
+   *   fieldname: 'file',
+   *   originalname: '251 GI.jpg',
+   *   encoding: '7bit',
+   *   mimetype: 'image/jpeg',
+   *   buffer: <Buffer ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01 00 01 00 00 ff db 00 43 00 05 03 04 04 04 03 05 04 04 04 05 05 05 06 07 0c 08 07 07 07 07 0f 0b 0b 09 ... 78027 more bytes>,
+   *   size: 78077
+   * }
+   * @param file
+   */
+  private async saveUserAvatarFile(file) {
+    const extensions = {
+      'image/jpeg': 'jpg',
+      'image/png': 'png',
+    };
+    const timestamp = new Date().getTime();
+    const randomStr = await crypto.randomBytes(8);
+    const filename = `${timestamp}${randomStr.toString('hex')}`;
+    const extension = extensions[file.mimetype.toLowerCase()];
+    const filePath = path.join('public/uploads/', `${filename}.${extension}`);
+    fs.writeFileSync(filePath, file.buffer);
+    return {
+      filename: filename,
+      path: filePath,
+    };
+  }
+  async updateUserAvatar(user: User, file) {
+    const result = await this.saveUserAvatarFile(file);
+    user.avatar = result.path;
     return this.userRepository.save(user);
   }
 }

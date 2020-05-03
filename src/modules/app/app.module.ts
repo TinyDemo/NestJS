@@ -2,6 +2,7 @@ import { HandlebarsAdapter, MailerModule } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
+import * as path from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -13,7 +14,6 @@ import databaseConfiguration from '../../config/database';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    PassportModule,
     TypeOrmModule.forRoot(databaseConfiguration()),
     MailerModule.forRoot({
       transport: mailConfiguration(),
@@ -25,6 +25,7 @@ import databaseConfiguration from '../../config/database';
         },
       },
     }),
+    PassportModule,
     UserModule,
     AuthModule,
   ],

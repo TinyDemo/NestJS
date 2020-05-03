@@ -1,6 +1,20 @@
-import { Body, Controller, Delete, Get, HttpCode, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Patch,
+  Post,
+  Req,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { IsNotEmpty } from 'class-validator';
 import { Request } from 'express';
+import avatarUploadOptions from '../../config/avatarUploadOptions';
 import { User } from '../../entities/user.entity';
 import { BearerAuthGuard } from '../auth/guards/bearer-auth.guard';
 import { PassportAuthGuard } from '../auth/guards/passport-auth.guard';
@@ -88,6 +102,16 @@ export class UserController {
   @Patch('profile')
   async updateProfile(@Req() req: Request, @Body() body: AllowUserUpdateProfileDto) {
     await this.userService.updateProfile(<User>req.user, body);
+    return {
+      code: 100000,
+      message: 'OK',
+    };
+  }
+  @UseGuards(BearerAuthGuard)
+  @Post('profile/avatar')
+  @UseInterceptors(FileInterceptor('file', avatarUploadOptions()))
+  async updateAvatar(@Req() req: Request, @UploadedFile() file) {
+    await this.userService.updateUserAvatar(<User>req.user, file);
     return {
       code: 100000,
       message: 'OK',
