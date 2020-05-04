@@ -35,15 +35,13 @@ export class AuthService {
   }
 
   /**
-   * 用户登录
+   * 用户注册
    * @param email
    * @param password
    */
   async registerWithEmail(email: string, password: string): Promise<User> {
-    const hashPassword = bcrypt.hashSync(password, 10);
-    const user = new User();
+    const user = this.userService.setUserPassword(new User(), password);
     user.email = email;
-    user.password = hashPassword;
     user.nickname = email.split('@').shift();
     return this.userRepository.save(user);
   }
