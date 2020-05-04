@@ -1,5 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Repository } from 'typeorm';
@@ -7,6 +8,7 @@ import { User } from '../../entities/user.entity';
 import { PassportService } from '../auth/passport.service';
 import { TokenService } from '../auth/token.service';
 import { AllowUserUpdateProfileDto } from './dto/allow-user-update-profile.dto';
+
 const crypto = require('crypto');
 @Injectable()
 export class UserService {
@@ -81,5 +83,25 @@ export class UserService {
     const result = await this.saveUserAvatarFile(file);
     user.avatar = result.path;
     return this.userRepository.save(user);
+  }
+
+  /**
+   * 用户更新密码
+   * @param user
+   * @param password
+   */
+  async updateUserPassword(user: User, password: string): Promise<User> {
+    user = this.setUserPassword(user, password);
+    return this.userRepository.save(user);
+  }
+
+  /**
+   * 为 User 对象设置密码
+   * @param user
+   * @param password
+   */
+  setUserPassword(user: User, password: string): User {
+    user.password = bcrypt.hashSync(password, 10);
+    return user;
   }
 }

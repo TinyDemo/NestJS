@@ -6,6 +6,7 @@ import {
   HttpCode,
   Patch,
   Post,
+  Put,
   Req,
   UploadedFile,
   UseGuards,
@@ -19,6 +20,7 @@ import { User } from '../../entities/user.entity';
 import { BearerAuthGuard } from '../auth/guards/bearer-auth.guard';
 import { PassportAuthGuard } from '../auth/guards/passport-auth.guard';
 import { AllowUserUpdateProfileDto } from './dto/allow-user-update-profile.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 import { VerifyCodeStyleEmailVerificationDto } from './dto/verify-code-style-email-verification.dto';
 import { EmailVerificationService } from './email-verification.service';
 import { UserService } from './user.service';
@@ -112,6 +114,15 @@ export class UserController {
   @UseInterceptors(FileInterceptor('file', avatarUploadOptions()))
   async updateAvatar(@Req() req: Request, @UploadedFile() file) {
     await this.userService.updateUserAvatar(<User>req.user, file);
+    return {
+      code: 100000,
+      message: 'OK',
+    };
+  }
+  @UseGuards(BearerAuthGuard, PassportAuthGuard)
+  @Put('profile/password')
+  async updatePassword(@Req() req: Request, @Body() body: UpdatePasswordDto) {
+    await this.userService.updateUserPassword(<User>req.user, body.password);
     return {
       code: 100000,
       message: 'OK',
